@@ -1,15 +1,15 @@
 //Room.cs
 //Created by Aaron C Gaudette on 18.11.16
 
-using System.Math;
+using System;
 
 namespace Darkchamber.Basic2D{
    public class Room : Node{
       public Position position;
 
-      //Extend to add parameters and render
+      //Extend in subclasses to add parameters and render
 
-      public Room(B2dMap map, Position position):base(map){
+      public Room(Map<Node> map, Position position):base(map){
          this.position = position;
       }
 
@@ -17,18 +17,17 @@ namespace Darkchamber.Basic2D{
          if(!Position.Adjacent(this.position,other.position))
             return false;
 
-         Link(direction,other);
+         Link((int)direction,other);
          //Reflect
-         other.Link(direction.Opposite(),this);
+         other.Link((int)direction.Opposite(),this);
          return true;
       }
       public bool Disconnect(Direction direction){
          //Reflect
-         if(Linked(direction)
-            GetLink(direction).Unlink(direction.Opposite());
-         return Unlink(direction);
+         if(Linked((int)direction))
+            GetLink<Room>((int)direction).Unlink((int)direction.Opposite());
+         return Unlink((int)direction);
       }
-      //also add room functions, but iterate through enum
 
       //TODO: Implement A* with Position.Distance()
       //public override Room[] PathTo(Room target){}

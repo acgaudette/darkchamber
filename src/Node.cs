@@ -6,15 +6,15 @@ using System.Collections.Generic;
 namespace Darkchamber{
    public abstract class Node{
       readonly ulong id;
-      SortedDictionary<int,this.GetType()> links;
-      protected Map<this.GetType()> map; //Map reference
+      SortedDictionary<int,Node> links;
+      protected Map<Node> map; //Map reference
 
       //Extend in subclasses to add parameters and render
 
-      public Node(Map map){
+      public Node(Map<Node> map){
          this.map = map;
          id = map.RegisterNode(this);
-         links = new SortedDictionary<int,this.GetType()>();
+         links = new SortedDictionary<int,Node>();
       }
       ~Node(){
          map.DeregisterNode(this);
@@ -26,22 +26,22 @@ namespace Darkchamber{
       public ulong ID{get{return id;}}
 
       public bool Linked(Node other){
-         return GetLink(other)!=null;
+         return GetLink<Node>(other)!=null;
       }
-      public Node GetLink(Node other){
-         if(this==other)return this;
+      public N GetLink<N>(Node other) where N:Node{
+         if(this==other && this is N)return (N)this;
 
          foreach(Node link in links.Values)
-            if(link==other)return link;
+            if(link==other && link is N)return (N)link;
          return null;
       }
       public bool Linked(int direction){
          return links.ContainsKey(direction);
       }
-      public Node GetLink(int direction){
+      public N GetLink<N>(int direction) where N:Node{
          Node result;
          links.TryGetValue(direction,out result);
-         return result;
+         return result is N?(N)result:null;
       }
 
       public void Link(int direction, Node other){
@@ -63,7 +63,7 @@ namespace Darkchamber{
          //BFS
          Queue<Node> frontier = new Queue<Node>();
          Dictionary<Node,Node> previous = new Dictionary<Node,Node>();
-         Node current;
+         Node current = this;
          frontier.Enqueue(this);
          previous[this] = null;
 
@@ -85,7 +85,7 @@ namespace Darkchamber{
             path.Add(current);
          }
          path.Reverse();
-         return path;
+         return path.ToArray();
       }
 
       public static bool CompareDomain(Node n0, Node n1){
@@ -94,8 +94,12 @@ namespace Darkchamber{
          return n0.map==n1.map;
       }
 
-      public static override operator ==(Node n0, Node n1){
+      //TODO: Override Object.Equals() and Object.GetHashCode()
+      public static bool operator==(Node n0, Node n1){
          return CompareDomain(n0,n1) && n0.ID==n1.ID;
+      }
+      public static bool operator!=(Node n0, Node n1){
+         return !CompareDomain(n0,n1) || n0.ID!=n1.ID;
       }
    }
 }

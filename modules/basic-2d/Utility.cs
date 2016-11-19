@@ -1,11 +1,11 @@
 //Utility.cs
 //Created by Aaron C Gaudette on 18.11.16
-//
 
-using System.Math;
+using System;
 
 namespace Darkchamber.Basic2D{
-   enum Direction{NORTH,EAST,SOUTH,WEST};
+   public enum Direction{NORTH,EAST,SOUTH,WEST};
+
    public static class Extensions{
       public static Direction Opposite(this Direction direction){
          switch(direction){
@@ -17,13 +17,15 @@ namespace Darkchamber.Basic2D{
                return Direction.NORTH;
             case Direction.WEST:
                return Direction.EAST;
+            default:
+               return Direction.NORTH; //TODO: Return null direction
          }
-      }
+      }   
    }
 
    public struct Position{
       public int x, y;
-      public Position(x,y){
+      public Position(int x, int y){
          this.x = x; this.y = y;
       }
 
@@ -45,7 +47,7 @@ namespace Darkchamber.Basic2D{
       }
 
       public static bool Adjacent(Position p0, Position p1){
-         return Math.Abs(p1.x-p0.x==1) && Math.Abs(p1.y-p0.y==1);
+         return Math.Abs(p1.x-p0.x)==1 && Math.Abs(p1.y-p0.y)==1;
       }
    }
 }

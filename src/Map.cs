@@ -8,20 +8,20 @@ namespace Darkchamber{
       ulong idptr = 0;
       Dictionary<ulong,N> nodes;
 
-      public void Map(){
+      public Map(){
          nodes = new Dictionary<ulong,N>();
       }
 
       public ulong nodeCount{get{return idptr;}}
 
-      public ulong RegisterNode(Node node){
+      public ulong RegisterNode(N node){
          nodes.Add(idptr,node);
          return idptr++;
       }
-      public bool DeregisterNode(Node node){
+      public bool DeregisterNode(N node){
          return nodes.Remove(node.ID);
       }
-      public bool Registered(Node node){
+      public bool Registered(N node){
          return nodes.ContainsKey(node.ID);
       }
    }
