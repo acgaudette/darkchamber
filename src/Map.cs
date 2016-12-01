@@ -4,25 +4,35 @@
 using System.Collections.Generic;
 
 namespace Darkchamber{
-   public abstract class Map<N> where N:Node{
-      ulong idptr = 0;
+   public partial class Map<N> where N:Node{
+      ulong idptr, offset;
       Dictionary<ulong,N> nodes;
 
       public Map(){
+         idptr = offset = 0;
          nodes = new Dictionary<ulong,N>();
       }
 
-      public ulong nodeCount{get{return idptr;}}
+      public N this[ulong i]{get{
+         return nodes.ContainsKey(i)?nodes[i]:null;
+      }}
 
-      public ulong RegisterNode(N node){
+      public ulong nodeCount{get{return idptr-offset;}}
+
+      public bool Registered(N node){
+         return node!=null && nodes.ContainsKey(node.ID);
+      }
+
+      ulong RegisterNode(N node){
          nodes.Add(idptr,node);
          return idptr++;
       }
-      public bool DeregisterNode(N node){
-         return nodes.Remove(node.ID);
-      }
-      public bool Registered(N node){
-         return nodes.ContainsKey(node.ID);
+      bool DeregisterNode(N node){
+         if(nodes.Remove(node.ID)){
+            offset++;
+            return true;
+         }
+         return false; //Not registered
       }
    }
 }

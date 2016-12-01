@@ -1,47 +1,56 @@
 //Director.cs
 //Created by Aaron C Gaudette on 18.11.16
-//Base class for managing entities on a map
+//Base class for managing entities
 
 using System.Collections.Generic;
 
 namespace Darkchamber{
-   public class Director<N> where N:Node{
-      public readonly Map<N> map;
-      protected List<Entity> entities;
-      protected List<Agent> agents;
+   public abstract class Director<N> where N:Map<N>.Node{
+      protected List<Entity<N>> entities;
+      protected List<Agent<N>> agents;
 
       //Extend in subclasses to add game state and simulation
 
-      public Director(Map<N> map){
-         this.map = map;
-         entities = new List<Entity>();
-         agents = new List<Agent>();
+      public Director(){
+         entities = new List<Entity<N>>();
+         agents = new List<Agent<N>>();
       }
 
-      public bool EntityExists(N node){
-         foreach(Entity entity in entities)
-            if(entity.at==node)return true;
+      //Is a given entity present?
+      public bool Live(Entity<N> entity){
+         return entities.Contains(entity);
+      }
+
+      public bool EntityExists<E>(N node) where E:Entity<N>{
+         foreach(Entity<N> entity in entities)
+            if(entity.at==node && entity is E)return true;
          return false;
       }
       //An inverted implementation of this method would be faster, but consume more memory
-      public Entity[] EntitiesAt<E>(N node) where E:Entity{
+      public E[] EntitiesAt<E>(N node) where E:Entity<N>{
          List<E> located = new List<E>();
-         foreach(E entity in entities)
-            if(entity.at==node)located.Add(entity);
+         foreach(Entity<N> entity in entities)
+            if(entity.at==node && entity is E)located.Add(entity as E);
          return located.ToArray();
       }
 
-      public void Spawn(Entity entity){
-         entities.Add(entity);
-         if(entity is Agent)
-            agents.Add((Agent)entity);
+      public abstract N Closest<E>(N node) where E:Entity<N>;
+
+      public E SpawnImmediate<E>(E entity) where E:Entity<N>{
+         SpawnImmediate(entity as Entity<N>);
+         return entity;
       }
-      public bool Despawn(Entity entity){
-         foreach(Entity e in entities){
+      public void SpawnImmediate(Entity<N> entity){
+         entities.Add(entity);
+         if(entity is Agent<N>)
+            agents.Add((Agent<N>)entity);
+      }
+      public bool DespawnImmediate(Entity<N> entity){
+         foreach(Entity<N> e in entities){
             if(e==entity){
                entities.Remove(e);
-               if(entity is Agent)
-                  agents.Remove((Agent)e);
+               if(entity is Agent<N>)
+                  agents.Remove((Agent<N>)e);
                return true;
             }
          }

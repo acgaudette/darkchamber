@@ -29,6 +29,21 @@ namespace Darkchamber.Basic2D{
          this.x = x; this.y = y;
       }
 
+      public Position Neighbor(Direction direction){
+         switch(direction){
+            case Direction.NORTH:
+               return new Position(x,y+1);
+            case Direction.EAST:
+               return new Position(x+1,y);
+            case Direction.SOUTH:
+               return new Position(x,y-1);
+            case Direction.WEST:
+               return new Position(x-1,y);
+            default:
+               return new Position(0,0); //TODO: Return null
+         }
+      }
+
       public static Position operator +(Position p0, Position p1){
          return new Position(p0.x+p1.x,p0.y+p1.y);
       }
@@ -39,6 +54,8 @@ namespace Darkchamber.Basic2D{
          return "("+x+","+y+")";
       }
 
+      public static Position origin{get{return new Position(0,0);}}
+
       public static double DistanceSquared(Position p0, Position p1){
          return (p1.x-p0.x)*(p1.x-p0.x) + (p1.y-p0.y)*(p1.y-p0.y);
       }
@@ -47,7 +64,16 @@ namespace Darkchamber.Basic2D{
       }
 
       public static bool Adjacent(Position p0, Position p1){
-         return Math.Abs(p1.x-p0.x)==1 && Math.Abs(p1.y-p0.y)==1;
+         return (Math.Abs(p1.x-p0.x)==1) != (Math.Abs(p1.y-p0.y)==1);
+      }
+
+      public override int GetHashCode(){
+         unchecked{
+            int hash = 27;
+            hash = (13*hash)+x.GetHashCode();
+            hash = (13*hash)+y.GetHashCode();
+            return hash;
+         }
       }
    }
 }
