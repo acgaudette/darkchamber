@@ -1,8 +1,9 @@
-//IPollable.cs
-//Created by Aaron C Gaudette on 30.11.16
+// IPollable.cs
+// Created by Aaron C Gaudette on 30.11.16
 
-namespace Darkchamber.Basic2D{
-   interface IPollable{
-      void Poll();
-   }
+namespace Darkchamber.Basic2D {
+
+  interface IPollable {
+    void Poll();
+  }
 }
