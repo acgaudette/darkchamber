@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Darkchamber {
 
-  public partial class Map<N> where N : Node {
+  public partial class Map<N> where N : Map<N>.Node {
     ulong idptr, offset;
     Dictionary<ulong,N> nodes;
 

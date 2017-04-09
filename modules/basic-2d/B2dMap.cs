@@ -12,7 +12,7 @@ namespace Darkchamber.Basic2D {
       grid = new Dictionary<Position, Room>();
 
       // Create root node
-      Room root = new Room(this, Position.origin);
+      Room root = new Room(this, Position.Origin);
       root.Initialize();
     }
 
